@@ -108,7 +108,7 @@ namespace CSChatServer
             }
         }
 
-        // 데이터를 수신하는 함수
+        // 데이터를 수신하는 함수.
         public void ReceiveAsync()
         {
             // Receive용 SAEA에 수신용 버퍼를 설정합니다. SAEA를 매개변수로 ReceiveAsync를 호출하게 되면 수신된 데이터가 SAEA에 설정된 버퍼, 즉 this.receiveBuffer에 설정됩니다.
@@ -143,12 +143,19 @@ namespace CSChatServer
         private void CloseSession()
         {
             // 연결된 소켓을 Close 한 뒤, 사용하던 SAEA들의 메모리를 정리합니다.
-            connectedSocket.Close();
-            receiveArgs.Dispose();
-            sendArgs.Dispose();
+            try
+            {
+                connectedSocket.Close();
+            }
+            catch { }
+            finally
+            {
+                receiveArgs.Dispose();
+                sendArgs.Dispose();
 
-            // 세션이 종료되었음을 알리는 콜백을 호출합니다.
-            closedCallback?.Invoke();
+                // 세션이 종료되었음을 알리는 콜백을 호출합니다.
+                closedCallback?.Invoke();
+            }
         }
     }
 
