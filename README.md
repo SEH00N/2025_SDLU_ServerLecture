@@ -78,11 +78,94 @@ js-ws-chat-server 참고
 js-ws-chat-client 참고
 
 ### 테스트
-1. js-ws-chat-server 디렉토리에서 새 터미널 열기
+1. 서버 프로젝트 디렉토리에서 새 터미널 열기
 2. 터미널에 `node index.js` 입력
-   - 위 명령어를 통해 `js-ws-chat-server/index.js`에 적힌 코드를 node 런타임으로 실행합니다.
-3. js-ws-chat-client 디렉토리에서 두개의 새 터미널 열기
+   - 위 명령어를 통해 `<서버 디렉토리>/index.js`에 적힌 코드를 node 런타임으로 실행합니다.
+3. 클라이언트 디렉토리에서 두개의 새 터미널 열기
 4. 각 터미널에 `node index.js` 입력
-   - 위 명령어를 통해 `js-ws-chat-server/index.js`에 적힌 코드를 node 런타임으로 실행합니다.
+   - 위 명령어를 통해 `<클라이언트 디렉토리>/index.js`에 적힌 코드를 node 런타임으로 실행합니다.
 5. 각 클라이언트 코드를 node로 실행한 터미널에 메세지 입력
    - 각 클라이언트 콘솔에 메세지를 입력하여 A콘솔에서 보낸 메세지가 B콘솔로 전달 되었는지, B콘솔에서 보낸 메세지가 A콘솔로 전달 되었는지 확인합니다.
+
+## 11월 20일 (목)
+
+### 환경 설정
+1. dotnet sdk 9.0 설치
+2. vscode 확장 C# Dev Kit 설치
+3. 필요시 dotnet 환경변수 설정
+4. 유니티 설치 (2023+)
+
+### 서버 프로젝트 설정
+1. 서버 프로젝트로 사용할 디렉토리 생성 & 터미널 열기
+2. 터미널에 `dotnet new console --use-program-main` 입력
+   - `dotnet new console` 명령어를 통해 콘솔 앱 프로젝트를 생성하되, `--use-program-main` 옵션을 부여하여 public static void Main(string[] args) 의 템플릿을 사용하도록 명시합니다.
+3. 터미널에 `code -r .` 입력
+   - 사용중인 vscode 창에서 현재 터미널이 열려있는 경로의 폴더를 오픈합니다. 이를 통해 솔루션 파일을 생성하고, C# 프로젝트를 로드합니다.
+4. `.csproj` 파일을 열어 다음 옵션을 제거합니다.
+   - `<ImplicitUsings>enable</ImplicitUsings>` using 문을 명시적으로 추가하지 않아도 되게 하는 옵션입니다. 코드의 가독성을 해칠 가능성이 있는 옵션이기에 제거합니다.
+   - `<Nullable>enable</Nullable>` Nullable 참조 유형을 명시하도록 강제하는 옵션입니다. 코드의 가독성을 해칠 가능성이 있는 옵션이기에 제거합니다.
+5. `Program.cs` 의 내용을 다음과 같이 수정합니다.
+   ```cs
+   using System;
+
+   namespace <ProjectName>
+   {
+      internal class Program
+      {
+         static void Main(string[] args)
+         {
+            Console.WriteLine("Hello, World!");
+         }
+      }
+   }
+   ```
+6. `.vscode/task.json` 에 dotnet 기본 빌드 task 구성을 추가합니다.
+   ```json
+   {
+      "version": "2.0.0",
+      "tasks": [
+         {
+            "type": "dotnet",
+            "task": "build",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "dotnet: build"
+         }
+      ]
+   }
+   ```
+7. `.vscode/launch.json` dotnet 콘솔 앱 luanch 구성을 추가합니다.
+   ```json
+   {
+      "version": "0.2.0",
+      "configurations": [
+         {
+               "name": ".NET Core Launch (console)",
+               "type": "coreclr",
+               "request": "launch",
+               "preLaunchTask": "dotnet: build",
+               "program": "${workspaceFolder}/bin/Debug/net9.0/<ProjectName>.dll",
+               "args": [],
+               "cwd": "${workspaceFolder}",
+               "stopAtEntry": false,
+               "console": "internalConsole"
+         }
+      ]
+   }
+   ```
+8. 방금 생성한 `.NET Core Launch (console)` launch를 디버거로 설정합니다.
+9. F5를 눌러 앱을 실행하여 콘솔에 `Hello, World!` 가 출력되는지 확인합니다.
+
+### 서버 코드 작성
+CSChatServer 참고
+
+### 클라이언트 프로젝트 설정
+1. 유니티 프로젝트를 생성합니다. (템플릿 무관)
+
+### 클라이언트 코드 작성
+CSChatClient 참고
+
+### 테스트
+1. vscode로 서버 프로젝트를 연 뒤 F5를 눌러 실행합니다.
+2. 클라이언트 프로젝트를 백그라운드에서도 동작하도록 빌드하여 두개 이상의 클라이언트를 실행합니다.
+3. 각 클라이언트에서 메세지를 전송하여 다른 클라이언트에서 잘 표시되는지 확인합니다.
