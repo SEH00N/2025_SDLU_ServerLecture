@@ -3,10 +3,12 @@ namespace CSGameServer
     public class ServerPacketHandlerData : IPacketHandlerData
     {
         public GameServer GameServer { get; set; }
+        public World World { get; set; }
 
-        public ServerPacketHandlerData(GameServer gameServer)
+        public ServerPacketHandlerData(GameServer gameServer, World world)
         {
-            this.GameServer = gameServer;
+            GameServer = gameServer;
+            World = world;
         }
     }
 }

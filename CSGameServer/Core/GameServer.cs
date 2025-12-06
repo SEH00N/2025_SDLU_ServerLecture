@@ -8,6 +8,7 @@ namespace CSGameServer
 {
     public class GameServer
     {
+        private World world = null;
         private Socket listenSocket = null;
 
         private ConcurrentDictionary<string, ClientSessionHandle> sessions = null;
@@ -15,8 +16,9 @@ namespace CSGameServer
         public event Action<ClientSession> OnSessionConnectedEvent = null;
         public event Action<ClientSession> OnSessionDisconnectedEvent = null;
 
-        public GameServer()
+        public GameServer(World world)
         {
+            this.world = world;
             sessions = new ConcurrentDictionary<string, ClientSessionHandle>();
         }
 
@@ -56,7 +58,7 @@ namespace CSGameServer
             session.OnSessionClosedEvent += () => HandleSessionClosed(sessionID);
             session.Open();
 
-            ClientSessionHandle sessionHandle = new ClientSessionHandle(session);
+            ClientSessionHandle sessionHandle = new ClientSessionHandle(session, world);
             sessions.TryAdd(sessionID, sessionHandle);
 
             OnSessionConnectedEvent?.Invoke(session);

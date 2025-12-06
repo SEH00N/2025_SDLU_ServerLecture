@@ -8,13 +8,17 @@ namespace CSGameServer
         {
             SetUpPacketManager();
 
-            GameServer gameServer = new GameServer();
+            World world = new World(30);
+            world.AddSystem(new PacketProcessSystem());
+
+            GameServer gameServer = new GameServer(world);
             gameServer.OnSessionConnectedEvent += (session) => HandleSessionConnected(gameServer, session);
             gameServer.OnSessionDisconnectedEvent += (session) => HandleSessionDisconnected(gameServer, session);
 
-            ServerPacketHandlerData serverPacketHandlerData = new ServerPacketHandlerData(gameServer);
+            ServerPacketHandlerData serverPacketHandlerData = new ServerPacketHandlerData(gameServer, world);
             PacketManager.Initialize(serverPacketHandlerData);
 
+            world.StartUpdateLoop();
             gameServer.StartServer(9696);
 
             Console.ReadLine();
