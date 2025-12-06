@@ -127,7 +127,7 @@ namespace CSGameServer
             foreach (GameSystem system in systemAddQueue.Values)
                 PublishEvent(system, false, "Start", system => system.Start());
         }
-        
+
         protected virtual void OnPostUpdate(float deltaTime)
         {
             Dictionary<string, Entity> entityRemoveQueue = this.entityRemoveQueue;
@@ -157,6 +157,7 @@ namespace CSGameServer
             }
         }
 
+        public IEnumerable<Entity> GetAllEntities() => entityList.Values;
         public bool TryGetEntity(string entityID, out Entity entity)
         {
             entity = null;

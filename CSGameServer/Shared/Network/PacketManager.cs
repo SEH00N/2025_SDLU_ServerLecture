@@ -76,6 +76,7 @@ namespace CSGameServer
                     return false;
 
                 string packetTypeName = Encoding.UTF8.GetString(buffer.Array, buffer.Offset + PACKET_TYPE_SIZE_HEADER, packetTypeNameLength);
+                Console.WriteLine($"PacketReceived: {packetTypeName}");
                 if(packetTypes.TryGetValue(packetTypeName, out Type packetType) == false)
                     return false;
 

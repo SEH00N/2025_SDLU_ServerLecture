@@ -5,7 +5,7 @@ namespace CSGameServer
     public abstract class Entity : GameObject
     {
         private string id = string.Empty;
-        public override string ID => id;
+        public sealed override string ID => id;
 
         private VectorData position = null;
         public VectorData Position => position;

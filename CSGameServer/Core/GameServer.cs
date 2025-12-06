@@ -11,7 +11,7 @@ namespace CSGameServer
         private World world = null;
         private Socket listenSocket = null;
 
-        private ConcurrentDictionary<string, ClientSessionHandle> sessions = null;
+        private ConcurrentDictionary<string, ClientSessionHandle> sessionHandles = null;
 
         public event Action<ClientSession> OnSessionConnectedEvent = null;
         public event Action<ClientSession> OnSessionDisconnectedEvent = null;
@@ -19,7 +19,7 @@ namespace CSGameServer
         public GameServer(World world)
         {
             this.world = world;
-            sessions = new ConcurrentDictionary<string, ClientSessionHandle>();
+            sessionHandles = new ConcurrentDictionary<string, ClientSessionHandle>();
         }
 
         public void StartServer(int port, int backlog = 10)
@@ -58,17 +58,18 @@ namespace CSGameServer
             session.OnSessionClosedEvent += () => HandleSessionClosed(sessionID);
             session.Open();
 
-            ClientSessionHandle sessionHandle = new ClientSessionHandle(session, world);
-            sessions.TryAdd(sessionID, sessionHandle);
+            ClientSessionHandle sessionHandle = new ClientSessionHandle(this, session, world);
+            sessionHandles.TryAdd(sessionID, sessionHandle);
 
             OnSessionConnectedEvent?.Invoke(session);
 
             AcceptAsync(acceptArgs);
         }
 
-        public bool TryGetSession(string sessionID, out ClientSessionHandle sessionHandle)
+        public IEnumerable<ClientSessionHandle> GetAllSessionHandles() => sessionHandles.Values;
+        public bool TryGetSessionHandle(string sessionID, out ClientSessionHandle sessionHandle)
         {
-            return sessions.TryGetValue(sessionID, out sessionHandle);
+            return sessionHandles.TryGetValue(sessionID, out sessionHandle);
         }
 
         public void Send(ClientSession session, Packet packet)
@@ -84,8 +85,8 @@ namespace CSGameServer
             if (PacketManager.TrySerializePacket(packet, out ArraySegment<byte> serializedBuffer) == false)
                 return;
 
-            IEnumerable<ClientSessionHandle> sessionHandles = sessions.Values;
-            foreach (ClientSessionHandle sessionHandle in sessionHandles)
+            IEnumerable<ClientSessionHandle> clientSessionHandles = sessionHandles.Values;
+            foreach (ClientSessionHandle sessionHandle in clientSessionHandles)
             {
                 if (filter != null && filter(sessionHandle.Session) == false)
                     continue;
@@ -96,7 +97,7 @@ namespace CSGameServer
 
         private void HandleSessionClosed(string sessionID)
         {
-            if (sessions.TryRemove(sessionID, out ClientSessionHandle sessionHandle) == false)
+            if (sessionHandles.TryRemove(sessionID, out ClientSessionHandle sessionHandle) == false)
                 return;
 
             OnSessionDisconnectedEvent?.Invoke(sessionHandle.Session);

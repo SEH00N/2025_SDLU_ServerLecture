@@ -10,7 +10,7 @@ namespace CSGameServer
 
         protected override void OnHandlePacket(ClientSession session, MessagePacket packet)
         {
-            if (gameServer.TryGetSession(session.SessionID, out ClientSessionHandle sessionHandle) == false)
+            if (gameServer.TryGetSessionHandle(session.SessionID, out ClientSessionHandle sessionHandle) == false)
                 return;
 
             string broadcastMessage = $"{sessionHandle.Session.SessionID}: {packet.Message}";
