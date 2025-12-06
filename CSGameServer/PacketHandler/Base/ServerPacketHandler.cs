@@ -9,5 +9,14 @@ namespace CSGameServer
             ServerPacketHandlerData serverPacketHandlerData = packetHandlerData as ServerPacketHandlerData;
             gameServer = serverPacketHandlerData.GameServer;
         }
+
+        protected abstract void OnHandlePacket(ClientSession session, TPacket packet);
+        protected sealed override void HandlePacket(Session session, TPacket packet)
+        {
+            if (session is ClientSession clientSession == false)
+                return;
+
+            OnHandlePacket(clientSession, packet);
+        }
     }
 }

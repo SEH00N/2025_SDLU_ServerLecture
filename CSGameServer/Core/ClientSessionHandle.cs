@@ -1,10 +1,10 @@
 namespace CSGameServer
 {
-    public class SessionHandle
+    public class ClientSessionHandle
     {
-        public Session Session { get; set; }
+        public ClientSession Session { get; set; }
         
-        public SessionHandle(Session session)
+        public ClientSessionHandle(ClientSession session)
         {
             Session = session;
             Session.OnPacketReceivedEvent += HandlePacketReceived;

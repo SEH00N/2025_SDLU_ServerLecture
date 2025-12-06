@@ -10,14 +10,14 @@ namespace CSGameServer
     {
         private Socket listenSocket = null;
 
-        private ConcurrentDictionary<string, SessionHandle> sessions = null;
+        private ConcurrentDictionary<string, ClientSessionHandle> sessions = null;
 
-        public event Action<SessionHandle> OnSessionConnectedEvent = null;
-        public event Action<SessionHandle> OnSessionDisconnectedEvent = null;
+        public event Action<ClientSession> OnSessionConnectedEvent = null;
+        public event Action<ClientSession> OnSessionDisconnectedEvent = null;
 
         public GameServer()
         {
-            sessions = new ConcurrentDictionary<string, SessionHandle>();
+            sessions = new ConcurrentDictionary<string, ClientSessionHandle>();
         }
 
         public void StartServer(int port, int backlog = 10)
@@ -52,24 +52,24 @@ namespace CSGameServer
 
             string sessionID = Guid.NewGuid().ToString();
 
-            Session session = new Session(acceptArgs.AcceptSocket, sessionID);
+            ClientSession session = new ClientSession(acceptArgs.AcceptSocket, sessionID);
             session.OnSessionClosedEvent += () => HandleSessionClosed(sessionID);
             session.Open();
 
-            SessionHandle sessionHandle = new SessionHandle(session);
+            ClientSessionHandle sessionHandle = new ClientSessionHandle(session);
             sessions.TryAdd(sessionID, sessionHandle);
 
-            OnSessionConnectedEvent?.Invoke(sessionHandle);
+            OnSessionConnectedEvent?.Invoke(session);
 
             AcceptAsync(acceptArgs);
         }
 
-        public bool TryGetSession(string sessionID, out SessionHandle sessionHandle)
+        public bool TryGetSession(string sessionID, out ClientSessionHandle sessionHandle)
         {
             return sessions.TryGetValue(sessionID, out sessionHandle);
         }
 
-        public void Send(Session session, Packet packet)
+        public void Send(ClientSession session, Packet packet)
         {
             if (PacketManager.TrySerializePacket(packet, out ArraySegment<byte> serializedBuffer) == false)
                 return;
@@ -77,15 +77,15 @@ namespace CSGameServer
             session.SendAsync(serializedBuffer);
         }
 
-        public void SendAll(Packet packet, Func<SessionHandle, bool> filter = null)
+        public void SendAll(Packet packet, Func<ClientSession, bool> filter = null)
         {
             if (PacketManager.TrySerializePacket(packet, out ArraySegment<byte> serializedBuffer) == false)
                 return;
 
-            IEnumerable<SessionHandle> sessionHandles = sessions.Values;
-            foreach (SessionHandle sessionHandle in sessionHandles)
+            IEnumerable<ClientSessionHandle> sessionHandles = sessions.Values;
+            foreach (ClientSessionHandle sessionHandle in sessionHandles)
             {
-                if (filter != null && filter(sessionHandle) == false)
+                if (filter != null && filter(sessionHandle.Session) == false)
                     continue;
 
                 sessionHandle.Session.SendAsync(serializedBuffer);
@@ -94,10 +94,10 @@ namespace CSGameServer
 
         private void HandleSessionClosed(string sessionID)
         {
-            if (sessions.TryRemove(sessionID, out SessionHandle sessionHandle) == false)
+            if (sessions.TryRemove(sessionID, out ClientSessionHandle sessionHandle) == false)
                 return;
 
-            OnSessionDisconnectedEvent?.Invoke(sessionHandle);
+            OnSessionDisconnectedEvent?.Invoke(sessionHandle.Session);
         }
     }
 }
