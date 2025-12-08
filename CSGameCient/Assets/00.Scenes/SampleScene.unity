@@ -461,7 +461,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &428774141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -809,7 +809,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1031,7 +1031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 607bec26e5cfa4a00860aa7d3ff1c7a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chatUI: {fileID: 428774145}
+  entityPrefab: {fileID: 6094511516176467553, guid: 9bd842a08e3e642b5810d04c9a7bda82, type: 3}
 --- !u!1 &1760428993
 GameObject:
   m_ObjectHideFlags: 0

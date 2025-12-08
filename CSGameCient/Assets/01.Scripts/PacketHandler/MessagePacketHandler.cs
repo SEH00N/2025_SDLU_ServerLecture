@@ -1,5 +1,4 @@
 using CSGameServer;
-using UnityEngine;
 
 public class MessagePacketHandler : ClientPacketHandler<MessagePacket>
 {
@@ -9,7 +8,6 @@ public class MessagePacketHandler : ClientPacketHandler<MessagePacket>
 
     protected override void HandlePacket(Session session, MessagePacket packet)
     {
-        Debug.Log(packet.Message);
-        chatUI.AddMessage(packet.Message);
+        // chatUI.AddMessage(packet.Message);
     }
 }

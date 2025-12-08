@@ -11,6 +11,5 @@ namespace CSGameServer
         {
             this.sessionID = sessionID;
         }
-
     }
 }

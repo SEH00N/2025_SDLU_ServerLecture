@@ -108,7 +108,9 @@ public class NetworkManager : MonoBehaviour
 
         lock(jobQueueLocker)
         {
-            jobQueue.Enqueue(() => OnSessionConnectedEvent?.Invoke());
+            jobQueue.Enqueue(() => {
+                OnSessionConnectedEvent?.Invoke();
+            });
         }
     }
 
