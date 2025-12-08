@@ -36,7 +36,7 @@ namespace CSGameServer
             gameServer.SendAll(broadcastPacket, otherSession => otherSession != session);
 
             gameServer.Send(session, new MessagePacket() {
-                Message = $"Welcom, {session.SessionID}!"
+                Message = $"Welcome, {session.SessionID}!"
             });
         }
 
